@@ -1,6 +1,22 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
-app_lucky_number:
-  path: /lucky/number
-  controller: App\Controller\LuckyController::number
+#app_lucky_number:
+#    path: /lucky/number
+#    controller: App\Controller\LuckyController::number
+news_create:
+    path: /createnews
+    controller: App\Controller\NewsController::CreateNews
+news_get:
+    path: /getnews/{id}
+    controller: App\Controller\NewsController::GetNews
+news_list:
+    path: /listnews
+    controller: App\Controller\NewsController::ListNews
+news_delete:
+    path: /deletenews/{id}
+    controller: App\Controller\NewsController::DeleteNews
+news_update:
+    path: /updatenews/{id}
+    controller: App\Controller\NewsController::UpdateNews
+
+#  news_file:
+# загружает маршруты из заданного файла маршрутизации, хранящегося в каком-то пакете
+ #   resource: '/News_routing.yml'
