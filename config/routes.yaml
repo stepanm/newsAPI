@@ -2,19 +2,24 @@
 #    path: /lucky/number
 #    controller: App\Controller\LuckyController::number
 news_create:
-    path: /createnews
+    path: /news
+    methods: [POST]
     controller: App\Controller\NewsController::CreateNews
 news_get:
-    path: /getnews/{id}
+    path: /news/{id}
+    methods: [GET]
     controller: App\Controller\NewsController::GetNews
 news_list:
-    path: /listnews
+    path: /news
+    methods: [GET]
     controller: App\Controller\NewsController::ListNews
 news_delete:
-    path: /deletenews/{id}
+    path: /news/{id}
+    methods: [DELETE]
     controller: App\Controller\NewsController::DeleteNews
 news_update:
-    path: /updatenews/{id}
+    path: /news/{id}
+    methods: [PUT]
     controller: App\Controller\NewsController::UpdateNews
 
 #  news_file:

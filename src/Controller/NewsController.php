@@ -28,8 +28,12 @@ class NewsController extends AbstractController
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new Response('Saved new product with id '.$news->getId());
-
+        //return new Response('Saved new product with id '.$news->getId());
+        $response=new Response();
+        $response->setContent(json_encode([
+            'Created'=> $news->getid()
+        ]));
+        return $response;
     }
 
     public function GetNews(int $id): Response
@@ -44,7 +48,16 @@ class NewsController extends AbstractController
             );
         }
 
-        return new Response('Check out this good news everyone: '.$news->getTitle());
+        //return new Response('Check out this good news everyone: '.$news->getTitle());
+        $response = new Response();
+        $response->setContent(json_encode([
+            'Title'=> $news->getTitle(),
+            'Content'=> $news->getContent(),
+            'Status'=> $news->getStatus(),
+            'PublicDate'=> $news->getPublicDate(),
+        ]));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
 
@@ -59,11 +72,31 @@ class NewsController extends AbstractController
                 'News not found'
             );
         }
- $listTitles='';
+/* $listTitles='';
 foreach ($arrnews as $news )
     $listTitles=$listTitles.' \n'.$news->getTitle();
+*/
+        //return new Response('List news: '.$listTitles);
+        $response = new Response();
 
-        return new Response('List news: '.$listTitles);
+        $arrNewsJson=[];
+        foreach ($arrnews as $news ) {
+            $temp=[
+                'id'        => $news->getId(),
+                'Title'     => $news->getTitle(),
+                'Content'   => $news->getContent(),
+                'Status'    => $news->getStatus(),
+                'PublicDate'    => $news->getPublicDate(),
+            ];
+            array_push($arrNewsJson,$temp);
+            }
+
+
+            $response->setContent(json_encode(
+                $arrNewsJson));
+
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
 
@@ -80,7 +113,13 @@ foreach ($arrnews as $news )
         }
         $entityManager->remove($news);
         $entityManager->flush();
-        return new Response('news is deleted. id is: '.$id);
+        //return new Response('news is deleted. id is: '.$id);
+        $response=new Response();
+        $response->setContent(json_encode([
+            'Deleted'=> $id
+        ]));
+        return $response;
+
     }
 
     public function UpdateNews(int $id): Response
@@ -101,7 +140,14 @@ foreach ($arrnews as $news )
         $news->setContent('sdfsdf');
         $entityManager->flush();
 
-        return new Response('news is updated. id is: '.$id);
+        /*return $this->redirectToRoute('news_get', [
+            'id' => $news->getId()
+        ]);*/
+        $response=new Response();
+        $response->setContent(json_encode([
+            'Updated'=> $id
+        ]));
+        return $response;
 
     }
 }
