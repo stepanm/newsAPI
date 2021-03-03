@@ -12,9 +12,16 @@ class LuckyController extends AbstractController
         /*$em = $this->getDoctrine()->getManager();
         $em->getConnection()->connect();
         $connected = $em->getConnection()->isConnected();*/
-        phpinfo();
+        //phpinfo();
+        $content_json=json_encode([
+"Title"=> "thirdnews",
+"Content"=> "sdfsdf",
+"Status"=> "active"
+]);
+        $content_arr=json_decode($content_json,true);//$content_arr['Title']
+
         return new Response(
-            '<html><body>Connection is : '.$number.'</body></html>'
+            '<html><body>'.$content_arr['Title'].'</body></html>'
         );
     }
 }

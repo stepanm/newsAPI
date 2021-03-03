@@ -5,22 +5,23 @@ namespace App\Controller;
 use App\Entity\News;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-
+//use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class NewsController extends AbstractController
 {
 
-    public function CreateNews(): Response
+    public function CreateNews(Request $request): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
+        $content = $request->getContent();
+        $arrcontent=json_decode($content,true);
 
         $news = new News();
-        $news->setTitle('third news');
+        $news->setTitle( $arrcontent["Title"]);
+        $news->setStatus( $arrcontent["Status"]);
+        $news->setContent( $arrcontent["Content"]);
         $news->setPublicDate(new \DateTime("now"));
-        $news->setStatus('active');
-        $news->setContent('sdfsdf');
-
 
         // tell Doctrine you want to (eventually) save the News (no queries yet)
         $entityManager->persist($news);
@@ -28,11 +29,12 @@ class NewsController extends AbstractController
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        //return new Response('Saved new product with id '.$news->getId());
         $response=new Response();
-        $response->setContent(json_encode([
+        $response->setContent(
+          json_encode([
             'Created'=> $news->getid()
-        ]));
+        ])
+        );
         return $response;
     }
 
@@ -48,13 +50,13 @@ class NewsController extends AbstractController
             );
         }
 
-        //return new Response('Check out this good news everyone: '.$news->getTitle());
         $response = new Response();
         $response->setContent(json_encode([
-            'Title'=> $news->getTitle(),
-            'Content'=> $news->getContent(),
-            'Status'=> $news->getStatus(),
-            'PublicDate'=> $news->getPublicDate(),
+            "id"=>$news->getid(),
+            "Title"=> $news->getTitle(),
+            "Content"=> $news->getContent(),
+            "Status"=> $news->getStatus(),
+            "PublicDate"=> $news->getPublicDate()
         ]));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
@@ -72,11 +74,7 @@ class NewsController extends AbstractController
                 'News not found'
             );
         }
-/* $listTitles='';
-foreach ($arrnews as $news )
-    $listTitles=$listTitles.' \n'.$news->getTitle();
-*/
-        //return new Response('List news: '.$listTitles);
+
         $response = new Response();
 
         $arrNewsJson=[];
@@ -122,9 +120,10 @@ foreach ($arrnews as $news )
 
     }
 
-    public function UpdateNews(int $id): Response
+    public function UpdateNews(int $id,Request $request): Response
     {
-
+        $content = $request->getContent();
+        $arrcontent=json_decode($content,true);
         $entityManager = $this->getDoctrine()->getManager();
         $news = $entityManager->getRepository(News::class)->find($id);
 
@@ -133,11 +132,11 @@ foreach ($arrnews as $news )
                 'No product found for id '.$id
             );
         }
-
-        $news->setTitle('New product name!');
+       //условие - что если придут не все поля
+        $news->setTitle($arrcontent["Title"]);
         $news->setPublicDate(new \DateTime("now"));
-        $news->setStatus('active');
-        $news->setContent('sdfsdf');
+        $news->setStatus($arrcontent["Status"]);
+        $news->setContent($arrcontent["Content"]);
         $entityManager->flush();
 
         /*return $this->redirectToRoute('news_get', [
