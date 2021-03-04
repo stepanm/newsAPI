@@ -35,6 +35,7 @@ class NewsController extends AbstractController
             'Created'=> $news->getid()
         ])
         );
+        $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
 
@@ -62,7 +63,7 @@ class NewsController extends AbstractController
         return $response;
     }
 
-
+/*
     public function ListNews(): Response
     {
         $arrnews = $this->getDoctrine()
@@ -92,11 +93,48 @@ class NewsController extends AbstractController
 
             $response->setContent(json_encode(
                 $arrNewsJson));
-
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
+*/
 
+    public function ListNews(Request $request): Response
+    {
+        $limit = $request->query->get('limit', 10000);
+        $page = $request->query->get('page', 1);
+
+        $offset=$limit*($page-1);
+        if($limit==10000){
+            $offset=0;
+        }
+        $arrnews = $this->getDoctrine()
+            ->getRepository(News::class)
+            ->findBy(array(),array('id'=>'ASC'),$limit,$offset);
+
+               if (!$arrnews) {
+                   throw $this->createNotFoundException(
+                       'News not found'
+                   );
+               }
+
+               $response = new Response();
+
+               $arrNewsJson=[];
+               foreach ($arrnews as $news ) {
+                   $temp=[
+                       'id'        => $news->getId(),
+                       'Title'     => $news->getTitle(),
+                       'Content'   => $news->getContent(),
+                       'Status'    => $news->getStatus(),
+                       'PublicDate'    => $news->getPublicDate(),
+                   ];
+                   array_push($arrNewsJson,$temp);
+               }
+               $response->setContent(json_encode(
+                   $arrNewsJson));
+               $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
 
     public function DeleteNews(int $id): Response
     {
@@ -111,11 +149,12 @@ class NewsController extends AbstractController
         }
         $entityManager->remove($news);
         $entityManager->flush();
-        //return new Response('news is deleted. id is: '.$id);
         $response=new Response();
         $response->setContent(json_encode([
             'Deleted'=> $id
         ]));
+        $response->headers->set('Content-Type', 'application/json');
+
         return $response;
 
     }
@@ -146,6 +185,8 @@ class NewsController extends AbstractController
         $response->setContent(json_encode([
             'Updated'=> $id
         ]));
+        $response->headers->set('Content-Type', 'application/json');
+
         return $response;
 
     }
